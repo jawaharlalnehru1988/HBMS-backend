@@ -2,44 +2,63 @@ import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import { Request, Response } from "express";
 import User from "../models/User";
+import logger from "../utils/logger"; // Import logger
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { name, email, password, role } = req.body;
+        logger.info("Register endpoint hit");
+        const { username, email, password, role } = req.body;
+        logger.debug("Request body:", { username, email, role });
         let user = await User.findOne({ email });
         if (user) {
+            logger.warn("User already exists:", { email });
             res.status(400).json({ message: "User already exists" });
             return;
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        user = new User({ name, email, password: hashedPassword, role });
+        user = new User({ username, email, password: hashedPassword, role });
+        logger.debug("New user created:", user);
         await user.save();
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
+        logger.error("Error in register:", error);
         res.status(500).json({ message: "Server Error" });
     }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
+        logger.info("Login endpoint hit");
         const { email, password } = req.body;
+        logger.debug("Request body:", { email });
+        logger.debug("Environment Variables:", process.env);
         const user = await User.findOne({ email });
         if (!user) {
+            logger.warn("Invalid credentials - user not found:", { email });
             res.status(400).json({ message: "Invalid credentials" });
             return;
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            logger.warn("Invalid credentials - password mismatch:", { email });
             res.status(400).json({ message: "Invalid credentials" });
+            return;
+        }
+        const secret = process.env.JWT_SECRET || "mysecretkey";
+        if (!secret) {
+            logger.error("JWT_SECRET is not defined in environment variables");
+            res.status(500).json({ message: "Server configuration error" });
             return;
         }
         const token = jwt.sign(
             { id: user._id, role: user.role },
-            process.env.JWT_SECRET as string,
+            secret,
             { expiresIn: "1h" }
         );
+        logger.debug("Token generated for user:", { id: user._id });
         res.json({ token, user: { id: user._id, name: user.username, email: user.email, role: user.role } });
     } catch (error) {
+        logger.error("Error in login:", error);
         res.status(500).json({ message: "Server Error" });
     }
 };

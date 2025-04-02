@@ -8,7 +8,9 @@
     "start": "nodemon --exec ts-node src/server.ts",
     "start:prod": "node src/server.ts",
     "build": "tsc",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "dev": "--env-file=.env nodemon --exec ts-node src/server.ts"
+
   },
   "keywords": [],
   "author": "",
@@ -27,6 +29,9 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.1",
-    "typescript": "^5.8.2"
+    "node": "^18.20.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "winston": "^3.17.0"
   }
 }

@@ -3,7 +3,7 @@ export interface IUser {
     username: string;
     email: string;
     password: string;
-    role: 'admin' | 'docker' | 'staff';
+    role: 'admin' | 'staff' | 'doctor';
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -12,7 +12,7 @@ const UserSchema = new Schema<IUser>({
     username: {type: String, required: true, unique: true},
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
-    role: {type: String, enum: ['admin', 'docker', 'staff'], default: 'staff'},
+    role: {type: String, enum: ['admin', 'staff', 'doctor'], default: 'staff'},
 }, {timestamps:true});
 
 
