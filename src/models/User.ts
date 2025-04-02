@@ -4,8 +4,6 @@ export interface IUser {
     email: string;
     password: string;
     role: 'admin' | 'staff' | 'doctor';
-    createdAt?: Date;
-    updatedAt?: Date;
 }
 
 const UserSchema = new Schema<IUser>({

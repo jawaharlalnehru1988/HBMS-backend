@@ -6,7 +6,6 @@ import bedRouter from './routes/bedRoutes';
 import dotenv from 'dotenv';
 import patientRouter from './routes/patientRoutes';
 import bookingRouter from './routes/bookingRoutes';
-dotenv.config();
 
 
 const connectDB = mongoose

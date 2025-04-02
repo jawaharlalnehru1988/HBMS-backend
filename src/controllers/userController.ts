@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 import { Request, Response } from "express";
 import User from "../models/User";
-import logger from "../utils/logger"; // Import logger
+import logger from "../utils/logger";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -56,7 +56,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             { expiresIn: "1h" }
         );
         logger.debug("Token generated for user:", { id: user._id });
-        res.json({ token, user: { id: user._id, name: user.username, email: user.email, role: user.role } });
+        res.json({ token, message: "User Logged in Successfully" });
     } catch (error) {
         logger.error("Error in login:", error);
         res.status(500).json({ message: "Server Error" });

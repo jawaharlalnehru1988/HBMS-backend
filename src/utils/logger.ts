@@ -1,7 +1,7 @@
 import { createLogger, format, transports } from "winston";
 
 const logger = createLogger({
-    level: "debug", // Set the default log level
+    level: "info", // Set the default log level
     format: format.combine(
         format.timestamp(),
         format.printf(({ timestamp, level, message, ...meta }) => {
