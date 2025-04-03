@@ -4,19 +4,20 @@ import logger from "../utils/logger"; // Import logger
 
 export const addBed = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { bedNumber, type, status } = req.body;
+        const { bedNumber, bedType, status, ward } = req.body;
         const existingBed = await Bed.findOne({ bedNumber });
         if (existingBed) {
             logger.warn("Bed already exists:", { bedNumber });
             res.status(400).json({ message: "Bed already exists" });
             return;
         }
-        const newBed = new Bed({ bedNumber, type, status });
+        const newBed = new Bed({ bedNumber, bedType, status, ward });
         logger.debug("New bed created:", newBed);
         await newBed.save();
         res.status(201).json({ message: "Bed added successfully", bed: newBed });
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({ message: "Server Error", error });
+        logger.error("Error adding bed:", error);
     }
 }
 
