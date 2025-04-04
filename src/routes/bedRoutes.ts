@@ -1,10 +1,10 @@
 import express from 'express';
 import { getAllBeds, addBed, updateBed, deleteBed, getBedById, getAvailableBeds, getOccupiedBeds } from '../controllers/bedController';
-// import authMiddleware from '../middleware/authMiddleware';
+import authMiddleware from '../middleware/authMiddleware';
 
 const bedRouter = express.Router();
 
-// bedRouter.use(authMiddleware);
+bedRouter.use(authMiddleware);
 
 bedRouter.post('/', addBed);
 bedRouter.get('/', getAllBeds);

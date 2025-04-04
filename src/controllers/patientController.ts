@@ -7,14 +7,8 @@ export const admitPatient = async (req: Request, res: Response) => {
     try {
         const { patientName, age, gender } = req.body;
 
-        const patient = await Bed.findOne({ patientName });
-
-        // if (!patient) {
-        //     res.status(400).json({ message: "Patient is not available" });
-        //     return;
-        // }
-
-        // Create and save patient
+       await Bed.findOne({ patientName });
+       
         const newPatient = new Patient({ patientName, age, gender });
         await newPatient.save();
 
@@ -36,29 +30,47 @@ export const getPatients = async (req: Request, res: Response) => {
     }
 };
 
-export const updatePatient = async (req: Request, res: Response)=>{
-    try{
-        const {age, gender, patientName } = req.body;
-        const patients = await Patient.findByIdAndUpdate(req.params.id, {age, gender, patientName});
-        if(!patients){
-            res.status(404).json({message: "User not found"});
-            return;
-        }
-        res.json(patients);
-    } catch(error){
-        res.status(500).json({message: "Server Error"});
-    }
-}
-
-export const deletePatient = async (req: Request, res: Response)=>{
+export const updatePatient = async (req: Request, res: Response) => {
     try {
-        const userId = req.params.id;
-        const deletePatient = await Patient.findByIdAndDelete(userId);
-        if(!deletePatient){
-            res.status(400).json({message: "Patient not Found" });
+        const { patientName, age, gender } = req.body; // Extract fields from payload
+        const patientId = req.params.id;
+
+        const updatedPatient = await Patient.findByIdAndUpdate(
+            patientId,
+            { patientName, age, gender }, // Update with payload fields
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedPatient) {
+            res.status(404).json({ message: "Patient not found" });
             return;
         }
+
+        res.json(updatedPatient);
     } catch (error) {
-        res.status(500).json({message: "Server not found"});
+        res.status(500).json({ message: "Server Error", error });
     }
-}
+};
+
+export const deletePatient = async (req: Request, res: Response) => {
+    try {
+        console.log("Delete patient request received", { params: req.params });
+
+        const { id } = req.params;
+        const userId = id;
+        console.log("Attempting to delete patient with ID:", userId);
+        const deletedPatient = await Patient.findByIdAndDelete(userId);
+
+        if (!deletedPatient) {
+            console.warn("Patient not found for ID:", userId);
+            res.status(404).json({ message: "Patient not found" });
+            return;
+        }
+
+        console.log("Patient deleted successfully", { deletedPatient });
+        res.status(200).json({ message: "Patient deleted successfully", patient: deletedPatient });
+    } catch (error) {
+        console.error("Error occurred while deleting patient", { error });
+        res.status(500).json({ message: "Server error", error });
+    }
+};

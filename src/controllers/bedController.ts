@@ -46,18 +46,34 @@ export const getBedById = async (req: Request, res: Response): Promise<void> => 
 
 export const updateBed = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { id } = req.params;
-        const { bedNumber, type, status } = req.body;
-        const updatedBed = await Bed.findOneAndUpdate( { bedNumber}, {type, status }, { new: true });
+        const { _id } = req.body; // Extract bedId from the request body
+        const { bedNumber, bedType, status, ward } = req.body;
+        const bedId = _id; // Assign bedId from the request body
+        logger.debug("Updating bed with ID:", bedId);
+        // Validate if bedId is provided
+        if (!bedId) {
+            res.status(400).json({ message: "Bed ID is required" });
+            return;
+        }
+
+        const updatedBed = await Bed.findByIdAndUpdate(
+            bedId, // Use bedId from the request body
+            { bedNumber, bedType, status, ward },
+            { new: true } // Return the updated document
+        );
+        logger.debug("Updated bed:", updatedBed);
+        // Check if the bed was found and updated
+
         if (!updatedBed) {
             res.status(404).json({ message: "Bed not found" });
             return;
         }
+
         res.status(200).json({ message: "Bed updated successfully", bed: updatedBed });
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({ message: "Server Error", error });
     }
-}
+};
 
 export const deleteBed = async (req: Request, res: Response): Promise<void> => {
     try {

@@ -3,11 +3,12 @@ import { admitPatient, deletePatient, getPatients, updatePatient } from "../cont
 import authMiddleware from "../middleware/authMiddleware";
 
 const patientRouter = express.Router();
+patientRouter.use(authMiddleware);
 
 patientRouter.post("/admit", admitPatient);      
 patientRouter.get("/", getPatients);     
-patientRouter.put("update/:id", updatePatient);
-patientRouter.delete("delete/:id", deletePatient);
+patientRouter.put("/update/:id", updatePatient);
+patientRouter.delete("/delete/:id", deletePatient);
    
 // patientRouter.delete("/discharge/:id", dischargePatient); 
 
