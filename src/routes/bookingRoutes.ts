@@ -1,5 +1,5 @@
 import express from "express";
-import { bookBed, updateBooking, cancelBooking } from "../controllers/bookingController";
+import { bookBed, updateBooking, discharge } from "../controllers/bookingController";
 
 const bookingRouter = express.Router();
 
@@ -10,6 +10,6 @@ bookingRouter.post("/book", bookBed);
 bookingRouter.put("/:id", updateBooking);
 
 // Route to cancel a booking
-bookingRouter.delete("/:id", cancelBooking);
+bookingRouter.delete("/:id", discharge);
 
 export default bookingRouter;

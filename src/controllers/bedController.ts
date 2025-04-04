@@ -30,6 +30,31 @@ export const getAllBeds = async (req: Request, res: Response): Promise<void> => 
     }
 }
 
+export const getPaginatedBeds = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const page = parseInt(req.query.page as string) || 1; // Default to page 1
+      const limit = parseInt(req.query.limit as string) || 10; // Default to 10 items per page
+  
+      const skip = (page - 1) * limit;
+  
+      const beds = await Bed.find()
+        .skip(skip)
+        .limit(limit);
+  
+      const totalBeds = await Bed.countDocuments(); // Get the total number of beds
+  
+      res.status(200).json({
+        beds,
+        currentPage: page,
+        totalPages: Math.ceil(totalBeds / limit),
+        totalItems: totalBeds,
+      });
+    } catch (error) {
+      console.error("Error fetching paginated beds:", error); // Log the error
+      res.status(500).json({ message: "Server Error" });
+    }
+  };
+
 export const getBedById = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;

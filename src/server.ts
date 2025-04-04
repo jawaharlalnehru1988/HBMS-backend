@@ -3,7 +3,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import userRouter from './routes/userRoutes';
 import bedRouter from './routes/bedRoutes';
-import dotenv from 'dotenv';
 import patientRouter from './routes/patientRoutes';
 import bookingRouter from './routes/bookingRoutes';
 import { Environment } from './utils/environment';
